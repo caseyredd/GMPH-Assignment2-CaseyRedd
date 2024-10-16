@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 
 public class Gun : MonoBehaviour
 {
+    [SerializeField] List<GameObject> Weapons;
+    [SerializeField] int weaponNum;
+    [SerializeField] GameObject spawnLocation;
     /// <summary>
     /// The direction of the initial velocity of the fired projectile. That is,
     /// this is the direction the gun is aiming in.
@@ -13,8 +16,7 @@ public class Gun : MonoBehaviour
     {
         get
         {
-            // TODO: YOUR CODE HERE
-            return Vector3.zero;
+            return SpawnPosition-transform.position;
         }
     }
 
@@ -26,8 +28,7 @@ public class Gun : MonoBehaviour
     {
         get
         {
-            // TODO: YOUR CODE HERE
-            return Vector3.zero;
+            return spawnLocation.transform.position;
         }
     }
 
@@ -39,8 +40,7 @@ public class Gun : MonoBehaviour
     {
         get
         {
-            // TODO: YOUR CODE HERE
-            return null;
+            return Weapons[weaponNum];
         }
     }
 
@@ -51,8 +51,8 @@ public class Gun : MonoBehaviour
     /// <returns>The newly created GameObject.</returns>
     public GameObject Fire()
     {
-        // TODO: YOUR CODE HERE
-        return null;
+        GameObject particle = Instantiate(CurrentWeapon, new Vector3(SpawnPosition.x, SpawnPosition.y, 0), Quaternion.identity);
+        return particle;
     }
 
     /// <summary>
@@ -63,11 +63,31 @@ public class Gun : MonoBehaviour
     /// </summary>
     public void CycleNextWeapon()
     {
-        // TODO: YOUR CODE HERE
+        weaponNum++;
+        if (weaponNum >= 4)
+        {
+            weaponNum = 0;
+        }
     }
 
     void Update()
     {
-        // TODO: YOUR CODE HERE (handle all input in Update, not FixedUpdate!)
+        if (Keyboard.current.wKey.wasPressedThisFrame)
+        {
+            CycleNextWeapon();
+        }
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        {
+            transform.Rotate(new Vector3(0, 0, transform.rotation.z + 1));
+        }
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        {
+            transform.Rotate(new Vector3(0, 0, transform.rotation.z - 1));
+        }
+        if (Keyboard.current.enterKey.wasPressedThisFrame)
+        {
+            GameObject particle = Fire();
+            particle.GetComponent<Particle2D>().velocity = new Vector3(FireDirection.x, FireDirection.y, 0);
+        }
     }
 }
